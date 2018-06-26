@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+
+	<class name="modelo.Host" table="host" schema="public">
+
+		<id name="idhost" type="integer">
+			<column name="idhost" />
+			<generator class="identity"/>
+		</id>
+				
+		<property name="cpu_vendedor" type="string">
+			<column name="cpu_vendedor" />
+		</property>
+		<property name="cpu_modelo" type="string">
+			<column name="cpu_modelo" />
+		</property>		
+		<property name="cpu_mhz" type="string">
+			<column name="cpu_mhz" />
+		</property>		
+		<property name="cpu_fisicas" type="string">
+			<column name="cpu_fisicas" />
+		</property>
+		<property name="cpu_nucleos" type="string">
+			<column name="cpu_nucleos" />
+		</property>
+		<property name="mac" type="string">
+			<column name="mac" />
+		</property>
+		<property name="so_fabricante" type="string">
+			<column name="so_fabricante" />
+		</property>
+		<property name="red_host" type="string">
+			<column name="red_host" />
+		</property>
+		
+		<property name="so_arquitectura" type="string">
+			<column name="so_arquitectura" />
+		</property>
+		<property name="so_version" type="string">
+			<column name="so_version" />
+		</property>
+		<property name="java_version" type="string">
+			<column name="java_version" />
+		</property>
+		<property name="usuario" type="string">
+			<column name="usuario" />
+		</property>
+		
+		<one-to-one name="hostArea" class="modelo.HostArea" ></one-to-one>
+		
+	</class>
+	
+</hibernate-mapping>

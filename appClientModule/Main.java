@@ -1,4 +1,3 @@
-
 import java.awt.AWTException;
 import java.awt.BorderLayout;
 import java.awt.Font;
@@ -27,6 +26,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
+import modelo.Host;
+
 /* en linux importar sigar 1.6.4
  * sudo cp /home/maxi/Descargas/hyperic-sigar-1.6.4/sigar-bin/lib/libsigar-amd64-linux.so /usr/lib
  * */
@@ -34,13 +35,16 @@ import javax.swing.SwingUtilities;
 import modelo.InfoCPU;
 import modelo.InfoNet;
 import modelo.InfoSO;
+import negocio.Facade;
+import negocio.HostABM;
 
 public class Main {
 
     public static void main(String[] args) {
     	SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                createAndShowGUI();
+               // createAndShowGUI();
+                showFrame();
             }
         });
     }
@@ -49,21 +53,19 @@ public class Main {
 
     private static void showFrame() {
     	
-        mainFrame = new JFrame("SME");
-        mainFrame.setFont(new Font("Chalet", Font.BOLD, 22));
+        mainFrame = new JFrame("Desarrollos Informáticos");
+        mainFrame.setFont(new Font("Arial", Font.ITALIC, 22));
         mainFrame.setIconImage(createImage("/META-INF/static/favicon_ba.png", "Icono"));
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        mainFrame.setSize(600, 200);
+        mainFrame.setSize(500, 200);
         mainFrame.setVisible(true);
        
         DefaultListModel model = new DefaultListModel();
         JList list = new JList(model);
-        JScrollPane pane = new JScrollPane(list);
-       
+        JScrollPane pane = new JScrollPane(list);    
         mainFrame.add(pane, BorderLayout.NORTH);
-        JLabel tabla = new JLabel("SME");
+        JLabel tabla = new JLabel("RegHost");
         mainFrame.add(tabla);
-       
        
        
         try {
@@ -71,13 +73,88 @@ public class Main {
             InetAddress addr = InetAddress.getLocalHost();
             String hostname = addr.getHostName();
             model.addElement("Nombre del equipo    :    "+hostname);
-*/ 
-            model.addElement("Información de la PC    :");
-            model.addElement(new InfoCPU().obtenerDatos().toString());
-            model.addElement("Información de Red    :");
-            model.addElement(new InfoNet().obtenerDatos().toString());
-            model.addElement("Información de Sistema Operativo    :");
-            model.addElement(new InfoSO().obtenerDatos().toString());
+ 
+        	
+//        	model.addElement("Informaciï¿½n de la PC    :");
+//          model.addElement(new InfoCPU().obtenerDatos().toString());
+        	String javaVersion = System.getProperty("java.version");
+        	String username=System.getProperty("user.name");
+        	
+            ArrayList<String> cpu=new InfoCPU().obtenerDatos();
+            model.addElement("Info del CPU    :");            
+            model.addElement("vendedor= "+cpu.get(1));
+            model.addElement("modelo= "+cpu.get(3));
+            model.addElement("Mhz= "+cpu.get(5));
+            model.addElement("cpu_fisicas= "+cpu.get(7));
+            model.addElement("nucleos= "+cpu.get(9));
+            
+            ArrayList<String> infonet=new InfoNet().obtenerDatos();
+            model.addElement("Info de Red    :"); 
+            model.addElement("ip_primaria= "+infonet.get(1));
+            model.addElement("mac= "+infonet.get(3));
+            model.addElement("host= "+infonet.get(5));
+            
+            ArrayList<String> so=new InfoSO().obtenerDatos();
+            model.addElement("fabricante= "+so.get(1));
+            model.addElement("nombre= "+so.get(3));
+            model.addElement("version= "+so.get(5));
+            model.addElement("arquitectura= "+so.get(7));
+            
+            model.addElement("java_version= "+javaVersion.toString());
+            model.addElement("usuario= "+username.toString());
+*/            
+    		Facade sist= new Facade();
+    		
+    		HostABM se=sist.getHostABM();
+    		
+        	String javaVersion = System.getProperty("java.version");
+        	String username=System.getProperty("user.name");
+        	
+            ArrayList<String> cpu=new InfoCPU().obtenerDatos();
+                       
+            String vendedor= cpu.get(1);
+            String modelo= cpu.get(3);
+            String Mhz= cpu.get(5);
+            String cpu_fisicas= cpu.get(7);
+            String nucleos= cpu.get(9);
+            
+            ArrayList<String> infonet=new InfoNet().obtenerDatos();
+            String ip_primaria= infonet.get(1);
+            String mac= infonet.get(3);
+            String host= infonet.get(5);
+            
+            ArrayList<String> so=new InfoSO().obtenerDatos();
+            String fabricante= so.get(1);
+            String nombre=so.get(3);
+            String version= so.get(5);
+            String arquitectura= so.get(7);
+            
+            String java_version= javaVersion.toString();
+            String usuario= username.toString();
+    		
+    		
+    		try {
+    			model.addElement("Equipo: "+host+" - Usuario: "+usuario);
+    			model.addElement("Mac :"+mac);
+    			model.addElement("Java Version :"+java_version);
+    			model.addElement("cpu: "+cpu.toString());
+    			model.addElement("Sistema operativo: "+" "+fabricante+" "+version+" "+arquitectura);
+    			
+    			se.agregarHost(new Host(vendedor,modelo,Mhz,cpu_fisicas,nucleos,mac,host,fabricante,version,arquitectura,java_version,usuario,null));
+    			
+    		
+    		} catch (Exception e) {
+    			// TODO Auto-generated catch block
+    			e.printStackTrace();
+    			model.addElement("Este host ya se encuentra registrado en el servidor!!!");  
+    		}
+           
+            
+            
+            //model.addElement("Informaciï¿½n de Red    :");
+           // model.addElement(new InfoNet().obtenerDatos().toString());
+           // model.addElement("Informaciï¿½n de Sistema Operativo    :");
+           // model.addElement(new InfoSO().obtenerDatos().toString());
           
         } catch (Exception e) {
             e.printStackTrace();
